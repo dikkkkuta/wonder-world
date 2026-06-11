@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🌈 Wonder World</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF8EE;--card:#fff;--coral:#FF6B6B;--coral-dk:#E05555;--sky:#4ECDC4;--sky-dk:#3AAFA8;
+--sun:#FFD166;--sun-dk:#F0BC50;--mint:#06D6A0;--mint-dk:#05B886;--purple:#9B72CF;--purple-dk:#7B52AF;
+--ink:#2D2D3A;--ink-mid:#5A5A72;--ink-soft:#9898B0;--sh:rgba(45,45,58,.1);--r:20px;--rs:12px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Poppins',system-ui,sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:
+radial-gradient(circle at 10% 10%,rgba(255,209,102,.2),transparent 40%),
+radial-gradient(circle at 90% 10%,rgba(78,205,196,.18),transparent 40%),
+radial-gradient(circle at 50% 95%,rgba(155,114,207,.12),transparent 40%)}
+#app{position:relative;z-index:1;max-width:500px;margin:0 auto;padding:10px 12px 40px;min-height:100%}
+.screen{display:none;flex-direction:column;align-items:center;gap:11px;animation:fu .25s ease}
+.screen.active{display:flex}
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.topbar{width:100%;display:flex;align-items:center;justify-content:space-between;padding:4px 0}
+.logo{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.35rem;display:flex;align-items:center;gap:5px}
+.spin{display:inline-block;animation:fl 3s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:rotate(-8deg)}50%{transform:translateY(-4px)rotate(8deg)}}
+.pill{background:var(--card);border-radius:99px;padding:5px 12px;font-weight:700;font-size:.8rem;color:var(--ink-mid);box-shadow:0 2px 8px var(--sh)}
+.pill b{color:var(--ink)}
+.h-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(1.3rem,5.6vw,1.8rem);text-align:center;line-height:1.2}
+.h-sub{color:var(--ink-soft);font-size:.84rem;text-align:center;padding:0 10px}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;width:100%}
+.tile{background:var(--card);border-radius:var(--r);padding:15px 6px 13px;cursor:pointer;text-align:center;box-shadow:0 4px 14px var(--sh);transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;overflow:hidden}
+.tile::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px}
+.tile:active{transform:scale(.93)translateY(2px)}
+.ti{font-size:clamp(1.7rem,7.5vw,2.3rem);line-height:1}
+.tl{font-family:'Baloo 2',cursive;font-weight:700;font-size:clamp(.68rem,2.8vw,.82rem);line-height:1.15}
+.t1::after{background:var(--coral)}.t2::after{background:var(--sky)}.t3::after{background:var(--sun-dk)}
+.t4::after{background:var(--mint)}.t5::after{background:var(--purple)}.t6::after{background:var(--coral)}
+.t7::after{background:var(--sky)}.t8::after{background:var(--sun-dk)}.t9::after{background:var(--mint)}
+.back{align-self:flex-start;background:var(--card);border:none;border-radius:99px;padding:8px 15px;font-family:inherit;font-weight:700;font-size:.82rem;color:var(--ink-mid);box-shadow:0 2px 8px var(--sh);cursor:pointer}
+.back:active{transform:scale(.93)}
+.card{width:100%;background:var(--card);border-radius:var(--r);padding:18px 14px;box-shadow:0 5px 18px var(--sh);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.bigq{font-size:clamp(2.2rem,11vw,3.6rem);line-height:1.25;word-spacing:6px}
+.qtext{font-family:'Baloo 2',cursive;font-weight:700;font-size:clamp(1.05rem,4.4vw,1.35rem);line-height:1.3}
+.opts{display:flex;gap:9px;width:100%;flex-wrap:wrap;justify-content:center}
+.opt{flex:1;min-width:90px;padding:15px 8px;border:3px solid #E8E6F0;border-radius:var(--rs);background:var(--card);font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(1.1rem,4.5vw,1.5rem);color:var(--ink);cursor:pointer;box-shadow:0 4px 0 #D8D6E8,0 4px 10px var(--sh);transition:all .12s;-webkit-tap-highlight-color:transparent}
+.opt:active{transform:translateY(3px);box-shadow:0 1px 0 #D8D6E8}
+.opt.good{border-color:var(--mint);background:#EDFAF5;box-shadow:0 4px 0 var(--mint-dk);color:var(--mint-dk)}
+.opt.bad{border-color:var(--coral);background:#FFF0F0;box-shadow:0 4px 0 var(--coral-dk);color:var(--coral-dk);animation:sh .35s}
+@keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.prog{width:100%;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:.8rem;color:var(--ink-soft)}
+.dots{display:flex;gap:4px}
+.dot{width:9px;height:9px;border-radius:50%;background:#E8E6F0}
+.dot.on{background:var(--mint)}
+.dot.off{background:var(--coral)}
+.bigbtn{width:100%;padding:15px;border:none;border-radius:var(--rs);font-family:inherit;font-weight:700;font-size:.95rem;color:#fff;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.15);transition:all .1s;-webkit-tap-highlight-color:transparent}
+.bigbtn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.15)}
+.bb-mint{background:linear-gradient(150deg,var(--mint),var(--mint-dk))}
+.bb-coral{background:linear-gradient(150deg,var(--coral),var(--coral-dk))}
+.bb-sky{background:linear-gradient(150deg,var(--sky),var(--sky-dk))}
+.bb-purple{background:linear-gradient(150deg,var(--purple),var(--purple-dk))}
+.row{display:flex;gap:9px;width:100%}
+/* memory */
+.memgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%}
+.mcard{aspect-ratio:3/4;border-radius:var(--rs);cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .35s;-webkit-tap-highlight-color:transparent}
+.mcard.flip{transform:rotateY(180deg)}
+.mface{position:absolute;inset:0;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 4px 10px var(--sh)}
+.mback{background:linear-gradient(150deg,var(--purple),var(--purple-dk));font-size:1.5rem}
+.mfront{background:var(--card);transform:rotateY(180deg);font-size:clamp(1.6rem,8vw,2.4rem);border:3px solid #E8E6F0}
+.mcard.done .mfront{border-color:var(--mint);background:#EDFAF5}
+/* piano */
+.piano{display:flex;gap:5px;width:100%;height:170px}
+.pkey{flex:1;background:var(--card);border:none;border-radius:0 0 12px 12px;box-shadow:0 5px 0 #C8C6D8,0 5px 12px var(--sh);font-family:'Baloo 2',cursive;font-weight:800;font-size:.9rem;color:var(--ink-soft);cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px;transition:all .08s;-webkit-tap-highlight-color:transparent}
+.pkey:active,.pkey.lit{background:var(--sun);box-shadow:0 1px 0 var(--sun-dk);transform:translateY(4px);color:var(--ink)}
+/* art */
+#artC{width:100%;border-radius:var(--r);background:#fff;box-shadow:0 5px 18px var(--sh);touch-action:none}
+.swatches{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.sw{width:34px;height:34px;border-radius:50%;cursor:pointer;border:3px solid transparent;box-shadow:0 2px 6px var(--sh)}
+.sw.on{border-color:var(--ink);transform:scale(1.15)}
+.sizes{display:flex;gap:8px;align-items:center}
+.sz{border-radius:50%;background:var(--ink);cursor:pointer;border:3px solid transparent}
+.sz.on{border-color:var(--coral)}
+/* maker cards */
+.makecard{width:100%;background:var(--card);border-radius:var(--r);padding:18px 16px;box-shadow:0 5px 18px var(--sh);text-align:left}
+.mk-emoji{font-size:3rem;text-align:center}
+.mk-title{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.3rem;text-align:center;margin:4px 0 8px}
+.mk-sec{font-weight:700;font-size:.78rem;color:var(--purple-dk);text-transform:uppercase;letter-spacing:.5px;margin:9px 0 3px}
+.mk-txt{font-size:.85rem;color:var(--ink-mid);line-height:1.55}
+.mk-q{background:rgba(155,114,207,.1);border-radius:var(--rs);padding:10px 12px;margin-top:10px;font-size:.83rem;color:var(--purple-dk);font-weight:600;line-height:1.45}
+/* french tabs */
+.tabs{display:flex;background:var(--card);border-radius:99px;padding:4px;gap:3px;box-shadow:0 3px 12px var(--sh);width:100%;max-width:340px}
+.tab{flex:1;padding:9px 4px;border:none;border-radius:99px;font-family:inherit;font-weight:700;font-size:.78rem;cursor:pointer;color:var(--ink-soft);background:transparent}
+.tab.active{color:#fff;background:var(--purple)}
+.frgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:8px;width:100%}
+.frcard{background:var(--card);border-radius:var(--rs);padding:12px 6px;text-align:center;cursor:pointer;box-shadow:0 4px 0 #D8D6E8,0 4px 10px var(--sh);transition:all .12s;-webkit-tap-highlight-color:transparent}
+.frcard:active{transform:translateY(3px);box-shadow:0 1px 0 #D8D6E8}
+.fr-e{font-size:1.9rem}
+.fr-f{font-family:'Baloo 2',cursive;font-weight:800;font-size:.95rem;color:var(--purple-dk)}
+.fr-en{font-size:.68rem;color:var(--ink-soft);font-weight:600}
+.overlay{position:fixed;inset:0;background:rgba(45,45,58,.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:200;padding:18px}
+.overlay.hidden{display:none}
+.rcard{background:var(--card);border-radius:24px;padding:26px 22px;text-align:center;max-width:310px;width:100%;display:flex;flex-direction:column;align-items:center;gap:9px;animation:pop .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+.re{font-size:4rem}
+.rt{font-family:'Baloo 2',cursive;font-weight:800;font-size:1.6rem}
+.rm{color:var(--ink-mid);font-size:.9rem;line-height:1.5}
+#cfx{position:fixed;inset:0;pointer-events:none;z-index:400}
+</style>
+</head>
+<body>
+<canvas id="cfx"></canvas>
+
+<div id="app">
+<div class="topbar">
+  <div class="logo"><span class="spin">🌈</span> Wonder World</div>
+  <div class="pill">⭐ <b id="stars">0</b></div>
+</div>
+
+<!-- HOME -->
+<div class="screen active" id="sHome">
+  <div class="h-title">What are you<br>curious about today? 🔍</div>
+  <p class="h-sub">Pick one adventure!</p>
+  <div class="grid">
+    <div class="tile t1" id="g-math"><div class="ti">🔢</div><div class="tl">Math Pop</div></div>
+    <div class="tile t2" id="g-mem"><div class="ti">🧠</div><div class="tl">Memory Match</div></div>
+    <div class="tile t3" id="g-pat"><div class="ti">🔺</div><div class="tl">Patterns</div></div>
+    <div class="tile t4" id="g-odd"><div class="ti">🔍</div><div class="tl">Odd One Out</div></div>
+    <div class="tile t5" id="g-fr"><div class="ti">🇫🇷</div><div class="tl">French Fun</div></div>
+    <div class="tile t6" id="g-mus"><div class="ti">🎹</div><div class="tl">Music Studio</div></div>
+    <div class="tile t7" id="g-sci"><div class="ti">🧪</div><div class="tl">Science Quiz</div></div>
+    <div class="tile t8" id="g-art"><div class="ti">🎨</div><div class="tl">Art Pad</div></div>
+    <div class="tile t9" id="g-mk"><div class="ti">♻️</div><div class="tl">Maker Lab</div></div>
+  </div>
+</div>
+
+<!-- QUIZ SCREEN (shared by math/patterns/odd/science/french-quiz) -->
+<div class="screen" id="sQuiz">
+  <button class="back" id="qBack">← Home</button>
+  <div class="prog"><span id="qLbl">Question 1 of 10</span><div class="dots" id="qDots"></div></div>
+  <div class="card">
+    <div class="bigq" id="qBig">🐱🐱🐱</div>
+    <div class="qtext" id="qTxt">How many cats?</div>
+  </div>
+  <div class="opts" id="qOpts"></div>
+  <button class="bigbtn bb-sky" id="qHear" style="display:none">🔊 Hear again</button>
+</div>
+
+<!-- MEMORY -->
+<div class="screen" id="sMem">
+  <button class="back" id="memBack">← Home</button>
+  <div class="prog"><span id="memLbl">Moves: 0</span><span id="memPairs">Pairs: 0/6</span></div>
+  <div class="memgrid" id="memGrid"></div>
+</div>
+
+<!-- FRENCH LEARN -->
+<div class="screen" id="sFr">
+  <button class="back" id="frBack">← Home</button>
+  <div class="h-title" style="font-size:1.4rem">French Fun 🇫🇷</div>
+  <div class="tabs">
+    <button class="tab active" id="frt-col">🎨 Colours</button>
+    <button class="tab" id="frt-num">🔢 Numbers</button>
+    <button class="tab" id="frt-ani">🐾 Animals</button>
+  </div>
+  <p class="h-sub">Tap a card to hear it in French!</p>
+  <div class="frgrid" id="frGrid"></div>
+  <button class="bigbtn bb-purple" id="frQuizBtn">🎯 Quiz Me!</button>
+</div>
+
+<!-- MUSIC -->
+<div class="screen" id="sMus">
+  <button class="back" id="musBack">← Home</button>
+  <div class="h-title" style="font-size:1.4rem">Music Studio 🎹</div>
+  <p class="h-sub" id="musMsg">Play freely, or try Echo!</p>
+  <div class="piano" id="piano"></div>
+  <div class="row">
+    <button class="bigbtn bb-purple" id="echoBtn">👂 Play Echo Game</button>
+  </div>
+  <div class="card" style="padding:12px">
+    <div style="font-weight:700;font-size:.82rem;color:var(--ink-mid)">🎵 Try: C C G G A A G — Twinkle Twinkle!</div>
+  </div>
+</div>
+
+<!-- ART -->
+<div class="screen" id="sArt">
+  <button class="back" id="artBack">← Home</button>
+  <canvas id="artC" height="420"></canvas>
+  <div class="swatches" id="swatches"></div>
+  <div class="row" style="align-items:center;justify-content:center">
+    <div class="sizes" id="sizes"></div>
+    <button class="bigbtn bb-coral" style="flex:0 0 auto;width:auto;padding:10px 20px" id="artClear">🗑️ Clear</button>
+  </div>
+</div>
+
+<!-- MAKER -->
+<div class="screen" id="sMk">
+  <button class="back" id="mkBack">← Home</button>
+  <div class="h-title" style="font-size:1.4rem">Maker Lab ♻️</div>
+  <p class="h-sub">Build with recycled things at home!</p>
+  <div class="makecard" id="mkCard"></div>
+  <div class="row">
+    <button class="bigbtn bb-mint" id="mkPrev">← Back</button>
+    <button class="bigbtn bb-coral" id="mkNext">Next Idea →</button>
+  </div>
+</div>
+</div>
+
+<!-- RESULT -->
+<div class="overlay hidden" id="ov">
+  <div class="rcard">
+    <div class="re" id="ovE">🎉</div>
+    <div class="rt" id="ovT">Well done!</div>
+    <div class="rm" id="ovM"></div>
+    <div class="row">
+      <button class="bigbtn bb-mint" id="ovAgain">🔁 Again</button>
+      <button class="bigbtn bb-coral" id="ovHome">🏠 Home</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── helpers ── */
+function say(t,r,p,lang){if(!window.speechSynthesis)return;try{var u=new SpeechSynthesisUtterance(t);u.rate=r||.85;u.pitch=p||1.1;u.volume=1;if(lang)u.lang=lang;speechSynthesis.speak(u);}catch(e){}}
+function addTap(el,fn){var t=false;el.addEventListener('touchstart',function(e){e.preventDefault();t=true;fn(e);setTimeout(function(){t=false;},500);},{passive:false});el.addEventListener('click',function(e){if(t)return;fn(e);});}
+function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+var stars=0;
+function addStar(n){stars+=n;document.getElementById('stars').textContent=stars;}
+function confetti(){var cv=document.getElementById('cfx'),x=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+var C=['#FF6B6B','#FFD166','#4ECDC4','#06D6A0','#9B72CF'],P=[];for(var i=0;i<70;i++)P.push({x:Math.random()*cv.width,y:-20,r:Math.random()*7+3,c:C[i%5],vx:(Math.random()-.5)*5,vy:Math.random()*4+2,a:Math.random()*6,s:Math.random()*.2-.1,l:0});
+var f=0;(function d(){x.clearRect(0,0,cv.width,cv.height);P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.06;p.a+=p.s;p.l++;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.globalAlpha=Math.max(0,1-p.l/110);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r*.3,p.r,p.r*.7);x.restore();});if(++f<120)requestAnimationFrame(d);else x.clearRect(0,0,cv.width,cv.height);})();}
+
+/* ── generic quiz engine ── */
+var Q={list:[],i:0,right:0,onDone:null,hearText:null,backTo:'sHome'};
+function startQuiz(questions,opts){
+  Q.list=questions;Q.i=0;Q.right=0;
+  Q.onDone=(opts&&opts.onDone)||null;Q.backTo='sHome';
+  show('sQuiz');renderQ();
+}
+function renderQ(){
+  var q=Q.list[Q.i];
+  if(!q){finishQuiz();return;}
+  document.getElementById('qLbl').textContent='Question '+(Q.i+1)+' of '+Q.list.length;
+  var dots=document.getElementById('qDots');dots.innerHTML='';
+  Q.list.forEach(function(_,n){var d=document.createElement('div');d.className='dot'+(n<Q.i?(Q.list[n]._ok?' on':' off'):'');dots.appendChild(d);});
+  document.getElementById('qBig').textContent=q.big||'';
+  document.getElementById('qTxt').textContent=q.text;
+  var hb=document.getElementById('qHear');
+  if(q.speak){hb.style.display='block';hb.onclick=null;say(q.speak,q.rate||.8,1.1,q.lang);}else hb.style.display='none';
+  var box=document.getElementById('qOpts');box.innerHTML='';
+  shuffle(q.opts).forEach(function(o){
+    var b=document.createElement('button');b.className='opt';b.textContent=o;
+    addTap(b,function(){
+      if(b.dataset.done)return;
+      if(o===q.answer){
+        q._ok=true;b.classList.add('good');b.dataset.done=1;
+        Q.right++;say(['Yes!','Great!','Bravo!','Super!'][Math.floor(Math.random()*4)],1,1.3);
+        setTimeout(function(){Q.i++;renderQ();},800);
+      }else{
+        q._ok=false;b.classList.add('bad');b.dataset.done=1;
+        say('Try the next one!',0.9,1.1);
+        setTimeout(function(){Q.i++;renderQ();},900);
+      }
+    });
+    box.appendChild(b);
+  });
+}
+function finishQuiz(){
+  var pct=Q.right/Q.list.length;
+  var got=pct>=.8?3:pct>=.5?2:1;
+  addStar(got);
+  document.getElementById('ovE').textContent=pct>=.8?'🏆':pct>=.5?'🌟':'💪';
+  document.getElementById('ovT').textContent=pct>=.8?'Champion!':pct>=.5?'Well done!':'Good try!';
+  document.getElementById('ovM').textContent='You got '+Q.right+' out of '+Q.list.length+'!  +'+got+' ⭐';
+  document.getElementById('ov').classList.remove('hidden');
+  if(pct>=.8)confetti();
+  say(pct>=.8?'Champion! Amazing work!':pct>=.5?'Well done!':'Good try! Practise makes perfect!',0.95,1.25);
+  document.getElementById('ovAgain').onclick=null;
+  addTapOnce('ovAgain',function(){hideOv();if(Q.onDone)Q.onDone();});
+  addTapOnce('ovHome',function(){hideOv();show('sHome');});
+}
+function hideOv(){document.getElementById('ov').classList.add('hidden');}
+var _ovBound={};
+function addTapOnce(id,fn){var el=document.getElementById(id);if(_ovBound[id]){el.replaceWith(el.cloneNode(true));el=document.getElementById(id);}addTap(el,fn);_ovBound[id]=1;}
+
+/* hub wiring */
+addTap(document.getElementById('qBack'),function(){show('sHome');});
+addTap(document.getElementById('g-math'),startMath);
+addTap(document.getElementById('g-pat'),startPatterns);
+addTap(document.getElementById('g-odd'),startOdd);
+addTap(document.getElementById('g-sci'),startSci);
+addTap(document.getElementById('g-mem'),startMem);
+addTap(document.getElementById('g-fr'),function(){show('sFr');renderFr();});
+addTap(document.getElementById('g-mus'),function(){show('sMus');});
+addTap(document.getElementById('g-art'),function(){show('sArt');initArt();});
+addTap(document.getElementById('g-mk'),function(){show('sMk');renderMk();});
+addTap(document.getElementById('memBack'),function(){show('sHome');});
+addTap(document.getElementById('frBack'),function(){show('sHome');});
+addTap(document.getElementById('musBack'),function(){show('sHome');});
+addTap(document.getElementById('artBack'),function(){show('sHome');});
+addTap(document.getElementById('mkBack'),function(){show('sHome');});
+
+/* ══ 1. MATH POP ══ */
+function startMath(){
+  var qs=[];
+  // counting
+  var emo=['🍎','⭐','🐱','🎈','🦋','🌸'];
+  for(var k=0;k<3;k++){
+    var n=2+Math.floor(Math.random()*7),e=emo[Math.floor(Math.random()*emo.length)];
+    qs.push({big:Array(n+1).join(e),text:'How many?',answer:String(n),opts:[String(n),String(n+1),String(Math.max(1,n-1))]});
+  }
+  // addition
+  for(var k=0;k<3;k++){
+    var a=1+Math.floor(Math.random()*5),b=1+Math.floor(Math.random()*5);
+    qs.push({big:a+' + '+b+' = ?',text:'Add them up!',answer:String(a+b),opts:[String(a+b),String(a+b+1),String(Math.max(1,a+b-1))]});
+  }
+  // subtraction
+  for(var k=0;k<2;k++){
+    var a=4+Math.floor(Math.random()*6),b=1+Math.floor(Math.random()*3);
+    qs.push({big:a+' − '+b+' = ?',text:'Take away!',answer:String(a-b),opts:[String(a-b),String(a-b+1),String(Math.max(0,a-b-1))]});
+  }
+  // missing number
+  for(var k=0;k<2;k++){
+    var s=1+Math.floor(Math.random()*5);
+    qs.push({big:s+', '+(s+1)+', ?, '+(s+3),text:'What number is missing?',answer:String(s+2),opts:[String(s+2),String(s+1),String(s+4)]});
+  }
+  startQuiz(shuffle(qs),{onDone:startMath});
+}
+
+/* ══ 2. MEMORY MATCH ══ */
+var M={open:[],moves:0,pairs:0,lock:false};
+function startMem(){
+  show('sMem');
+  M.open=[];M.moves=0;M.pairs=0;M.lock=false;
+  document.getElementById('memLbl').textContent='Moves: 0';
+  document.getElementById('memPairs').textContent='Pairs: 0/6';
+  var emo=shuffle(['🐶','🐱','🦊','🐸','🦋','🐢','🐼','🦁','🐙','🦄','🐝','🐬']).slice(0,6);
+  var deck=shuffle(emo.concat(emo));
+  var g=document.getElementById('memGrid');g.innerHTML='';
+  deck.forEach(function(e,i){
+    var c=document.createElement('div');c.className='mcard';c.dataset.e=e;
+    c.innerHTML='<div class="mface mback">✨</div><div class="mface mfront">'+e+'</div>';
+    addTap(c,function(){flipCard(c);});
+    g.appendChild(c);
+  });
+}
+function flipCard(c){
+  if(M.lock||c.classList.contains('flip')||c.classList.contains('done'))return;
+  c.classList.add('flip');M.open.push(c);
+  if(M.open.length===2){
+    M.moves++;document.getElementById('memLbl').textContent='Moves: '+M.moves;
+    M.lock=true;
+    var a=M.open[0],b=M.open[1];
+    if(a.dataset.e===b.dataset.e){
+      a.classList.add('done');b.classList.add('done');
+      M.pairs++;document.getElementById('memPairs').textContent='Pairs: '+M.pairs+'/6';
+      say(['Match!','Great memory!','Found it!'][Math.floor(Math.random()*3)],1,1.3);
+      M.open=[];M.lock=false;
+      if(M.pairs===6){
+        addStar(3);confetti();
+        setTimeout(function(){
+          document.getElementById('ovE').textContent='🧠';
+          document.getElementById('ovT').textContent='Memory Master!';
+          document.getElementById('ovM').textContent='All 6 pairs in '+M.moves+' moves!  +3 ⭐';
+          document.getElementById('ov').classList.remove('hidden');
+          say('Amazing memory! You found all the pairs!',0.95,1.25);
+          addTapOnce('ovAgain',function(){hideOv();startMem();});
+          addTapOnce('ovHome',function(){hideOv();show('sHome');});
+        },600);
+      }
+    }else{
+      setTimeout(function(){a.classList.remove('flip');b.classList.remove('flip');M.open=[];M.lock=false;},800);
+    }
+  }
+}
+
+/* ══ 3. PATTERNS ══ */
+function startPatterns(){
+  var sets=[['🔴','🔵'],['⭐','🌙'],['🐶','🐱'],['🍎','🍌'],['💛','💜'],['🌸','🌿'],['🔺','⬛']];
+  var qs=[];
+  for(var k=0;k<8;k++){
+    var pair=sets[Math.floor(Math.random()*sets.length)];
+    var type=Math.floor(Math.random()*3);
+    var seq=[],ans;
+    if(type===0){seq=[pair[0],pair[1],pair[0],pair[1],pair[0]];ans=pair[1];}        // ABAB
+    else if(type===1){seq=[pair[0],pair[0],pair[1],pair[1],pair[0]];ans=pair[0];}   // AABB
+    else{seq=[pair[0],pair[1],pair[1],pair[0],pair[1]];ans=pair[1];}                 // ABB
+    var wrong=pair[0]===ans?pair[1]:pair[0];
+    qs.push({big:seq.join(' ')+' ❓',text:'What comes next?',answer:ans,opts:[ans,wrong]});
+  }
+  startQuiz(qs,{onDone:startPatterns});
+}
+
+/* ══ 4. ODD ONE OUT ══ */
+function startOdd(){
+  var sets=[
+    {g:['🐶','🐱','🐭'],o:'🍎',t:'Which one is not an animal?'},
+    {g:['🍎','🍌','🍇'],o:'🚗',t:'Which one is not a fruit?'},
+    {g:['🔴','🔵','🟢'],o:'🐸',t:'Which one is not a circle?'},
+    {g:['🚗','🚌','🚲'],o:'🌳',t:'Which one cannot drive?'},
+    {g:['☀️','🌙','⭐'],o:'🐟',t:'Which one is not in the sky?'},
+    {g:['🦋','🐝','🐞'],o:'🐘',t:'Which one is not an insect?'},
+    {g:['👕','👖','🧦'],o:'🍕',t:'Which one is not clothing?'},
+    {g:['🐟','🐬','🦈'],o:'🦅',t:'Which one does not swim?'},
+    {g:['🌸','🌷','🌻'],o:'🪨',t:'Which one is not a flower?'},
+    {g:['🥕','🥦','🌽'],o:'🍭',t:'Which one is not a vegetable?'},
+  ];
+  var qs=shuffle(sets).slice(0,8).map(function(s){
+    var all=shuffle(s.g.concat([s.o]));
+    return {big:all.join('  '),text:s.t,answer:s.o,opts:all};
+  });
+  startQuiz(qs,{onDone:startOdd});
+}
+
+/* ══ 5. FRENCH ══ */
+var FR={
+  col:[{f:'rouge',en:'red',e:'🔴'},{f:'bleu',en:'blue',e:'🔵'},{f:'vert',en:'green',e:'🟢'},{f:'jaune',en:'yellow',e:'🟡'},{f:'rose',en:'pink',e:'🌸'},{f:'orange',en:'orange',e:'🟠'},{f:'noir',en:'black',e:'⚫'},{f:'blanc',en:'white',e:'⚪'}],
+  num:[{f:'un',en:'1',e:'1️⃣'},{f:'deux',en:'2',e:'2️⃣'},{f:'trois',en:'3',e:'3️⃣'},{f:'quatre',en:'4',e:'4️⃣'},{f:'cinq',en:'5',e:'5️⃣'},{f:'six',en:'6',e:'6️⃣'},{f:'sept',en:'7',e:'7️⃣'},{f:'huit',en:'8',e:'8️⃣'},{f:'neuf',en:'9',e:'9️⃣'},{f:'dix',en:'10',e:'🔟'}],
+  ani:[{f:'le chat',en:'cat',e:'🐱'},{f:'le chien',en:'dog',e:'🐶'},{f:'l\'oiseau',en:'bird',e:'🐦'},{f:'le poisson',en:'fish',e:'🐟'},{f:'le lapin',en:'rabbit',e:'🐰'},{f:'la vache',en:'cow',e:'🐮'},{f:'le cheval',en:'horse',e:'🐴'},{f:'la souris',en:'mouse',e:'🐭'}]
+};
+var frTab='col';
+['col','num','ani'].forEach(function(t){
+  addTap(document.getElementById('frt-'+t),function(){
+    frTab=t;
+    document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
+    document.getElementById('frt-'+t).classList.add('active');
+    renderFr();
+  });
+});
+function renderFr(){
+  var g=document.getElementById('frGrid');g.innerHTML='';
+  FR[frTab].forEach(function(w){
+    var c=document.createElement('div');c.className='frcard';
+    c.innerHTML='<div class="fr-e">'+w.e+'</div><div class="fr-f">'+w.f+'</div><div class="fr-en">'+w.en+'</div>';
+    addTap(c,function(){say(w.f,0.75,1.05,'fr-FR');});
+    g.appendChild(c);
+  });
+}
+addTap(document.getElementById('frQuizBtn'),function(){
+  var pool=FR[frTab];
+  var qs=shuffle(pool).slice(0,6).map(function(w){
+    var others=shuffle(pool.filter(function(x){return x.f!==w.f;})).slice(0,2).map(function(x){return x.e;});
+    return {big:'🇫🇷',text:'Tap the picture for: "'+w.f+'"',answer:w.e,opts:[w.e].concat(others),speak:w.f,lang:'fr-FR',rate:0.7};
+  });
+  startQuiz(qs,{onDone:function(){show('sFr');renderFr();}});
+});
+
+/* ══ 6. MUSIC ══ */
+var AC=null;
+function ensureAudio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();}
+var NOTES=[{n:'C',f:261.63},{n:'D',f:293.66},{n:'E',f:329.63},{n:'F',f:349.23},{n:'G',f:392},{n:'A',f:440},{n:'B',f:493.88},{n:'C',f:523.25}];
+function playNote(f,dur){
+  ensureAudio();if(!AC)return;
+  var o=AC.createOscillator(),g=AC.createGain();
+  o.type='triangle';o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(.4,AC.currentTime+.02);
+  g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+(dur||.45));
+  o.connect(g);g.connect(AC.destination);
+  o.start();o.stop(AC.currentTime+(dur||.45)+.05);
+}
+(function buildPiano(){
+  var p=document.getElementById('piano');
+  NOTES.forEach(function(nt,i){
+    var k=document.createElement('button');k.className='pkey';k.textContent=nt.n;k.id='pk'+i;
+    addTap(k,function(){playNote(nt.f);if(E.on)echoInput(i);});
+    p.appendChild(k);
+  });
+})();
+/* Echo (Simon) game */
+var E={on:false,seq:[],pos:0,len:2};
+addTap(document.getElementById('echoBtn'),function(){
+  ensureAudio();
+  E.on=true;E.len=2;
+  nextEcho();
+});
+function nextEcho(){
+  E.seq=[];for(var i=0;i<E.len;i++)E.seq.push(Math.floor(Math.random()*8));
+  E.pos=0;
+  document.getElementById('musMsg').textContent='👂 Listen…';
+  playSeq(0);
+}
+function playSeq(i){
+  if(i>=E.seq.length){document.getElementById('musMsg').textContent='🎯 Your turn! Repeat it!';return;}
+  var idx=E.seq[i],k=document.getElementById('pk'+idx);
+  k.classList.add('lit');playNote(NOTES[idx].f,.4);
+  setTimeout(function(){k.classList.remove('lit');setTimeout(function(){playSeq(i+1);},150);},420);
+}
+function echoInput(i){
+  if(i===E.seq[E.pos]){
+    E.pos++;
+    if(E.pos===E.seq.length){
+      say('Perfect!',1,1.3);addStar(1);
+      document.getElementById('musMsg').textContent='⭐ Perfect! Level up!';
+      E.len=Math.min(6,E.len+1);
+      setTimeout(nextEcho,1200);
+    }
+  }else{
+    say('Oops! Listen again!',0.9,1.1);
+    document.getElementById('musMsg').textContent='👂 Listen again…';
+    E.pos=0;setTimeout(function(){playSeq(0);},900);
+  }
+}
+
+/* ══ 7. SCIENCE QUIZ ══ */
+function startSci(){
+  var bank=[
+    {big:'🐟',text:'Where does a fish live?',answer:'🌊 Water',opts:['🌊 Water','🌳 Tree','🏠 House']},
+    {big:'🥚→🐛→🛡️→❓',text:'What does a caterpillar become?',answer:'🦋 Butterfly',opts:['🦋 Butterfly','🐦 Bird','🐝 Bee']},
+    {big:'🌱',text:'What do plants need to grow?',answer:'☀️ Sun + 💧 Water',opts:['☀️ Sun + 💧 Water','🍕 Pizza','🎮 Games']},
+    {big:'🪨',text:'Does a rock sink or float?',answer:'⬇️ Sink',opts:['⬇️ Sink','⬆️ Float']},
+    {big:'🍃',text:'Does a leaf sink or float?',answer:'⬆️ Float',opts:['⬆️ Float','⬇️ Sink']},
+    {big:'🕷️',text:'How many legs does a spider have?',answer:'8',opts:['8','6','4']},
+    {big:'🌙',text:'What do we see at night?',answer:'⭐ Stars',opts:['⭐ Stars','🌈 Rainbow','☀️ Sun']},
+    {big:'👂',text:'Which sense uses your ears?',answer:'Hearing',opts:['Hearing','Smelling','Tasting']},
+    {big:'🐸',text:'What is a baby frog called?',answer:'Tadpole',opts:['Tadpole','Puppy','Kitten']},
+    {big:'🧊',text:'Is ice hot or cold?',answer:'🥶 Cold',opts:['🥶 Cold','🥵 Hot']},
+    {big:'🐪',text:'Which animal lives in the desert?',answer:'🐪 Camel',opts:['🐪 Camel','🐧 Penguin','🐬 Dolphin']},
+    {big:'🌧️',text:'Where does rain come from?',answer:'☁️ Clouds',opts:['☁️ Clouds','🌳 Trees','🚗 Cars']},
+    {big:'♻️',text:'Which one can we recycle?',answer:'📄 Paper',opts:['📄 Paper','🍌 Banana peel','💧 Water']},
+    {big:'🌞',text:'What comes after night?',answer:'🌅 Day',opts:['🌅 Day','🌙 More night']},
+    {big:'🐧',text:'Where do penguins live?',answer:'🧊 Cold places',opts:['🧊 Cold places','🏜️ Desert','🌋 Volcano']},
+    {big:'🦷',text:'What keeps teeth healthy?',answer:'🪥 Brushing',opts:['🪥 Brushing','🍬 Candy','😴 Sleeping']},
+  ];
+  startQuiz(shuffle(bank).slice(0,10),{onDone:startSci});
+}
+
+/* ══ 8. ART PAD ══ */
+var ART={ctx:null,color:'#FF6B6B',size:8,drawing:false,init:false};
+function initArt(){
+  var c=document.getElementById('artC');
+  c.width=c.offsetWidth*2;c.height=420*2;
+  c.style.height='420px';
+  ART.ctx=c.getContext('2d');
+  ART.ctx.scale(2,2);
+  ART.ctx.lineCap='round';ART.ctx.lineJoin='round';
+  if(ART.init)return;
+  ART.init=true;
+  var colors=['#FF6B6B','#FF9F43','#FFD166','#06D6A0','#4ECDC4','#5B8DEF','#9B72CF','#F368E0','#8B5A2B','#2D2D3A'];
+  var sw=document.getElementById('swatches');
+  colors.forEach(function(col,i){
+    var s=document.createElement('div');s.className='sw'+(i===0?' on':'');s.style.background=col;
+    addTap(s,function(){ART.color=col;document.querySelectorAll('.sw').forEach(function(x){x.classList.remove('on');});s.classList.add('on');});
+    sw.appendChild(s);
+  });
+  var sizes=[5,10,18];
+  var sz=document.getElementById('sizes');
+  sizes.forEach(function(d,i){
+    var s=document.createElement('div');s.className='sz'+(i===1?' on':'');
+    s.style.width=(d+10)+'px';s.style.height=(d+10)+'px';
+    addTap(s,function(){ART.size=d;document.querySelectorAll('.sz').forEach(function(x){x.classList.remove('on');});s.classList.add('on');});
+    sz.appendChild(s);
+  });
+  ART.size=10;
+  function pos(e){
+    var r=c.getBoundingClientRect();
+    var t=e.touches?e.touches[0]:e;
+    return {x:t.clientX-r.left,y:t.clientY-r.top};
+  }
+  function start(e){e.preventDefault();ART.drawing=true;var p=pos(e);ART.ctx.beginPath();ART.ctx.moveTo(p.x,p.y);ART.ctx.lineTo(p.x,p.y);stroke();}
+  function move(e){if(!ART.drawing)return;e.preventDefault();var p=pos(e);ART.ctx.lineTo(p.x,p.y);stroke();}
+  function stroke(){ART.ctx.strokeStyle=ART.color;ART.ctx.lineWidth=ART.size;ART.ctx.stroke();}
+  function end(){ART.drawing=false;}
+  c.addEventListener('touchstart',start,{passive:false});
+  c.addEventListener('touchmove',move,{passive:false});
+  c.addEventListener('touchend',end);
+  c.addEventListener('mousedown',start);
+  c.addEventListener('mousemove',move);
+  c.addEventListener('mouseup',end);
+  addTap(document.getElementById('artClear'),function(){ART.ctx.clearRect(0,0,c.width,c.height);});
+}
+
+/* ══ 9. MAKER LAB ══ */
+var MK=[
+  {e:'🚀',t:'Rocket Ship',m:'Paper towel roll, foil, coloured paper, tape',s:'1. Wrap the roll in foil. 2. Cut a paper cone for the top. 3. Add paper flames at the bottom!',q:'🤔 Think like a scientist: What shape helps real rockets fly fast?'},
+  {e:'🤖',t:'Robot Buddy',m:'Small boxes, bottle caps, foil, glue',s:'1. Stack boxes for body and head. 2. Glue caps for eyes and buttons. 3. Make foil arms!',q:'🤔 Think like an engineer: What job would your robot do to help people?'},
+  {e:'⛵',t:'Floating Boat',m:'Plastic bottle, straw, paper, tape',s:'1. Cut bottle in half lengthways. 2. Tape a straw mast inside. 3. Add a paper sail. Test it in water!',q:'🤔 Predict first: Will it float? Why do heavy ships float but a coin sinks?'},
+  {e:'🔭',t:'Explorer Binoculars',m:'2 toilet rolls, string, stickers, tape',s:'1. Tape rolls side by side. 2. Punch holes and tie string. 3. Decorate and go exploring!',q:'🤔 Observe: Find 3 things outside you never noticed before!'},
+  {e:'🌺',t:'Flower Vase',m:'Plastic bottle, paint or paper, glue',s:'1. Cut the bottle top off (ask a grown-up!). 2. Decorate with paint or paper. 3. Add real or paper flowers!',q:'🤔 Think green: Why is reusing a bottle better than throwing it away?'},
+  {e:'🥁',t:'Shaker Maracas',m:'Empty bottle, rice or beans, tape, stickers',s:'1. Pour rice into the bottle. 2. Tape the lid on TIGHT. 3. Decorate and shake to the beat!',q:'🤔 Listen: Does more rice make a louder or quieter sound? Test it!'},
+  {e:'🏰',t:'Castle Fortress',m:'Cereal boxes, toilet rolls, paper, scissors',s:'1. Boxes make walls, rolls make towers. 2. Cut zigzags on top. 3. Draw a gate and flags!',q:'🤔 Design: How would you keep a dragon out of your castle?'},
+  {e:'🐷',t:'Piggy Bank',m:'Plastic bottle, paper, bottle caps, glue',s:'1. Ask a grown-up to cut a coin slot. 2. Glue 4 caps as legs. 3. Add paper ears and a curly tail!',q:'🤔 Math time: If you save 2 coins every day, how many in 5 days?'},
+  {e:'🦋',t:'Paper Roll Butterfly',m:'Toilet roll, paper, pipe cleaner, crayons',s:'1. Colour the roll for the body. 2. Cut paper wings and glue on. 3. Add pipe cleaner antennae!',q:'🤔 Science: A butterfly has 4 life stages. Can you name them in order?'},
+  {e:'🌧️',t:'Rain Cloud in a Jar',m:'Glass jar, water, shaving foam, food colouring',s:'1. Fill jar with water. 2. Add a foam cloud on top. 3. Drip colour onto the cloud and watch it rain!',q:'🤔 Observe: Why does the colour fall through? What do real clouds hold?'},
+];
+var mkIdx=0;
+function renderMk(){
+  var k=MK[mkIdx];
+  document.getElementById('mkCard').innerHTML=
+    '<div class="mk-emoji">'+k.e+'</div><div class="mk-title">'+k.t+'</div>'+
+    '<div class="mk-sec">You need</div><div class="mk-txt">'+k.m+'</div>'+
+    '<div class="mk-sec">Steps</div><div class="mk-txt">'+k.s+'</div>'+
+    '<div class="mk-q">'+k.q+'</div>';
+}
+addTap(document.getElementById('mkNext'),function(){mkIdx=(mkIdx+1)%MK.length;renderMk();});
+addTap(document.getElementById('mkPrev'),function(){mkIdx=(mkIdx-1+MK.length)%MK.length;renderMk();});
+</script>
+</body>
+</html>
